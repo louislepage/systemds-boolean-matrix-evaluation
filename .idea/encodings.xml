@@ -3,13 +3,5 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/scripts" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/main/cpp/lib" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/main/cuda/headers" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/main/cuda/kernels" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/main/cuda/spoof" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/main/java/org/apache/sysds/hops/codegen/cplan/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/../systemds/src/test/config/hadoop_bin_windows/bin" charset="UTF-8" />
   </component>
 </project>
