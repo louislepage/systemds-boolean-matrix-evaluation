@@ -17,7 +17,7 @@ public class Main {
         int rlen = 10000;
         int clen = 10000;
         long seed = 1337;
-        int numberOfRuns = 10;
+        int numberOfRuns = 25;
 
         LongSummaryStatistics timesSummaryStatisticsFP64 = new LongSummaryStatistics();
         LongSummaryStatistics timesSummaryStatisticsBOOLEAN = new LongSummaryStatistics();
@@ -35,7 +35,8 @@ public class Main {
             boolean sameValues = hasSameValues(matrix_fp64, matrix_true_boolean) && hasSameValues(matrix_fp64, matrix_boolean);
             if (!sameValues) throw new ArithmeticException("Results differ.");
         }
-        System.out.println("Done. Runtime statistics in ms:");
+        System.out.println("Done.\nMatrix Dimensions: "+rlen+" x "+clen+"\nOperator: "+GreaterThan.getGreaterThanFnObject().getClass().getSimpleName());
+        System.out.println("Runtime statistics in ms:");
         System.out.println("FP64:\n"+ timesSummaryStatisticsFP64);
         System.out.println("BOOLEAN:\n"+ timesSummaryStatisticsBOOLEAN);
         System.out.println("TRUE_BOOLEAN with boolean arithmetics:\n"+ timesSummaryStatisticsTRUE_BOOLEAN);
