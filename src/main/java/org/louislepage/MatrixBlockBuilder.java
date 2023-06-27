@@ -1,7 +1,5 @@
 package org.louislepage;
 
-import org.apache.sysds.common.Types;
-import org.apache.sysds.runtime.data.DenseBlockFactory;
 import org.apache.sysds.runtime.matrix.data.MatrixBlock;
 
 import java.util.Random;
