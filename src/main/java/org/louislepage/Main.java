@@ -1,8 +1,6 @@
 package org.louislepage;
 
 import org.apache.commons.math3.linear.MatrixDimensionMismatchException;
-import org.apache.sysds.common.Types;
-import org.apache.sysds.runtime.data.DenseBlockFactory;
 import org.apache.sysds.runtime.functionobjects.GreaterThan;
 import org.apache.sysds.runtime.functionobjects.ValueFunction;
 import org.apache.sysds.runtime.functionobjects.Xor;
@@ -60,7 +58,6 @@ public class Main {
         resultStatistics.put(new Pair<>(100000,100), new LinkedHashMap<>());
         resultStatistics.put(new Pair<>(160000,100), new LinkedHashMap<>());
 
-
         // resultStatistics.put(new Pair<>(10000,10000), new LinkedHashMap<>());
 
         String fileName = createFile(operator, booleanOperator, numberOfRuns, loopCount);
@@ -108,17 +105,17 @@ public class Main {
             System.out.println("=== Matrix Dimensions: "+rlen+" x "+clen+ " | Round "+(i+1)+" ===");
 
             //run Double to Boolean
-            MatrixBlock matrix_fp64 = runComparisonOperator(operatorFunction, Types.ValueType.FP64, rlen, clen, seed+i,  timesSummaryStatisticsFP64_DoubleToBool_Runtime, timesSummaryStatisticsFP64_DoubleToBool_Memory);
-            MatrixBlock matrix_bitset = runComparisonOperator(operatorFunction, Types.ValueType.BITSET, rlen, clen, seed+i,  timesSummaryStatisticsBITSET_DoubleToBool_Runtime, timesSummaryStatisticsBITSET_DoubleToBool_Memory);
-            MatrixBlock matrix_boolean = runComparisonOperator(operatorFunction, Types.ValueType.BOOLEAN, rlen, clen, seed+i,  timesSummaryStatisticsBOOLEAN_DoubleToBool_Runtime, timesSummaryStatisticsBOOLEAN_DoubleToBool_Memory);
+            MatrixBlock matrix_fp64 = runComparisonOperator(operatorFunction, MatrixBlockBuilder.MatrixBlockType.FP64, rlen, clen, seed+i,  timesSummaryStatisticsFP64_DoubleToBool_Runtime, timesSummaryStatisticsFP64_DoubleToBool_Memory);
+            MatrixBlock matrix_bitset = runComparisonOperator(operatorFunction, MatrixBlockBuilder.MatrixBlockType.BITSET, rlen, clen, seed+i,  timesSummaryStatisticsBITSET_DoubleToBool_Runtime, timesSummaryStatisticsBITSET_DoubleToBool_Memory);
+            MatrixBlock matrix_boolean = runComparisonOperator(operatorFunction, MatrixBlockBuilder.MatrixBlockType.BOOLEAN, rlen, clen, seed+i,  timesSummaryStatisticsBOOLEAN_DoubleToBool_Runtime, timesSummaryStatisticsBOOLEAN_DoubleToBool_Memory);
             validateResult(matrix_fp64, matrix_fp64);
             boolean sameValues = validateResult(matrix_fp64, matrix_boolean) && validateResult(matrix_fp64, matrix_bitset);
             if (!sameValues) throw new ArithmeticException("Results of Double to Boolean differ.");
 
             //run BooleanToBoolean
-            MatrixBlock matrix_fp64_boolean = runBooleanToBoolean(booleanOperator, Types.ValueType.FP64, rlen, clen, loopCount, seed+i,  timesSummaryStatisticsFP64_BoolToBool_Runtime, timesSummaryStatisticsFP64_BoolToBool_Memory);
-            MatrixBlock matrix_bitset_boolean = runBooleanToBoolean(booleanOperator, Types.ValueType.BITSET, rlen, clen, loopCount,seed+i,  timesSummaryStatisticsBITSET_BoolToBool_Runtime, timesSummaryStatisticsBITSET_BoolToBool_Memory);
-            MatrixBlock matrix_boolean_boolean = runBooleanToBoolean(booleanOperator, Types.ValueType.BOOLEAN, rlen, clen, loopCount,seed+i,  timesSummaryStatisticsBOOLEAN_BoolToBool_Runtime, timesSummaryStatisticsBOOLEAN_BoolToBool_Memory);
+            MatrixBlock matrix_fp64_boolean = runBooleanToBoolean(booleanOperator, MatrixBlockBuilder.MatrixBlockType.FP64, rlen, clen, loopCount, seed+i,  timesSummaryStatisticsFP64_BoolToBool_Runtime, timesSummaryStatisticsFP64_BoolToBool_Memory);
+            MatrixBlock matrix_bitset_boolean = runBooleanToBoolean(booleanOperator, MatrixBlockBuilder.MatrixBlockType.BITSET, rlen, clen, loopCount,seed+i,  timesSummaryStatisticsBITSET_BoolToBool_Runtime, timesSummaryStatisticsBITSET_BoolToBool_Memory);
+            MatrixBlock matrix_boolean_boolean = runBooleanToBoolean(booleanOperator, MatrixBlockBuilder.MatrixBlockType.BOOLEAN, rlen, clen, loopCount,seed+i,  timesSummaryStatisticsBOOLEAN_BoolToBool_Runtime, timesSummaryStatisticsBOOLEAN_BoolToBool_Memory);
 
             sameValues = validateResult(matrix_fp64_boolean, matrix_boolean_boolean)  && validateResult(matrix_fp64_boolean, matrix_bitset_boolean);
             if (!sameValues) throw new ArithmeticException("Results of Boolean to Boolean differ.");
@@ -143,21 +140,21 @@ public class Main {
         resultStatistics.put("BOOLEAN_BoolToBool_Memory", timesSummaryStatisticsBOOLEAN_BoolToBool_Memory);
     }
 
-    private static MatrixBlock runBooleanToBoolean(ValueFunction operatorFunction, Types.ValueType booleanType, int rlen, int clen, int  loopCount, long startSeed, LongSummaryStatistics timeStatistics, LongSummaryStatistics memoryStatistics){
+    private static MatrixBlock runBooleanToBoolean(ValueFunction operatorFunction, MatrixBlockBuilder.MatrixBlockType matrixBlockType, int rlen, int clen, int  loopCount, long startSeed, LongSummaryStatistics timeStatistics, LongSummaryStatistics memoryStatistics){
         long memBefore = MemoryCalculation.getMemoryUsed();
         MatrixBlock mb1;
         MatrixBlock mb2;
         MatrixBlock ret;
-        if(booleanType == Types.ValueType.FP64){
+        if(matrixBlockType == MatrixBlockBuilder.MatrixBlockType.FP64){
             mb1 = MatrixBlockBuilder.generateRandomDoubleBooleanMatrix(rlen, clen, startSeed);
             mb2 = MatrixBlockBuilder.generateRandomDoubleBooleanMatrix(rlen, clen, startSeed+1);
         }else{
-            mb1 = MatrixBlockBuilder.generateRandomBooleanMatrix(rlen, clen, startSeed, booleanType);
-            mb2 = MatrixBlockBuilder.generateRandomBooleanMatrix(rlen, clen, startSeed+1, booleanType);
+            mb1 = MatrixBlockBuilder.generateRandomBooleanMatrix(rlen, clen, startSeed, matrixBlockType);
+            mb2 = MatrixBlockBuilder.generateRandomBooleanMatrix(rlen, clen, startSeed+1, matrixBlockType);
         }
 
 
-        ret = new MatrixBlock(rlen,clen, DenseBlockFactory.createDenseBlock(booleanType, new int[]{rlen,clen}) );
+        ret = MatrixBlockBuilder.createMatrixBlock(rlen, clen, matrixBlockType);
 
         //if this throws an error, you probably have the default version of systemds where you can not force an operator to be not sparse safe
         //fix by adding a constructor that sets this in the superclass
@@ -184,18 +181,17 @@ public class Main {
         return ret;
     }
 
-    private static MatrixBlock runComparisonOperator(ValueFunction operatorFunction, Types.ValueType resultType, int rlen, int clen, long startSeed, LongSummaryStatistics timeStatistics, LongSummaryStatistics memoryStatistics){
+    private static MatrixBlock runComparisonOperator(ValueFunction operatorFunction, MatrixBlockBuilder.MatrixBlockType matrixBlockType, int rlen, int clen, long startSeed, LongSummaryStatistics timeStatistics, LongSummaryStatistics memoryStatistics){
         long memBefore = MemoryCalculation.getMemoryUsed();
-        //System.out.print("Operator: "+operatorFunction.getClass().getSimpleName()+" | Result type: "+resultType.toExternalString());
+        //System.out.print("Operator: "+operatorFunction.getClass().getSimpleName()+" | Result type: "+matrixBlockType.toExternalString());
 
 
         //Preparation of matrices
         MatrixBlock mb1 = MatrixBlockBuilder.generateRandomDoubleMatrix(rlen,clen, startSeed);
         MatrixBlock mb2 = MatrixBlockBuilder.generateRandomDoubleMatrix(rlen,clen, startSeed+1);
         BinaryOperator op = new BinaryOperator(operatorFunction, false);
+        MatrixBlock ret = MatrixBlockBuilder.createMatrixBlock(rlen, clen, matrixBlockType);
 
-
-        MatrixBlock ret = new MatrixBlock(rlen,clen, DenseBlockFactory.createDenseBlock(resultType, new int[]{rlen,clen}) );
 
         //running operator
         long start = System.nanoTime();
